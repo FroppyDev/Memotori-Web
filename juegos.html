@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/juegos.css">    
+    <title>Document</title>
+</head>
+<body>
+
+    <header>
+        <img class="logo" src="imagenes/logo.png">
+
+        <div class="user-menu">
+            <button id="userBtn" class="user-btn">
+                <span class="avatar">A</span>
+            </button>
+
+            <div id="userDropdown" class="user-dropdown">
+                <button>Perfil</button>
+                <button>Configuración</button>
+                <button class="logout" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="game-container">
+
+        <div class="progress">1 / 11</div>
+
+        <section id="game-mode">
+
+        </section>
+
+    </main>
+
+    <script src="js/juegos.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Memotori | Categoría</title>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Holtwood+One+SC&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/desktop.css">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <img src="imagenes/logo2.png" alt="Memotori">
+  </div>
+</header>
+
+<main class="contenido">
+
+
+  <h2 class="titulo" id="categoryTitle"></h2>
+
+  
+  <p class="descripcion" id="categoryDescription"></p>
+
+  <hr>
+
+
+  <div class="zona-juego">
+
+ 
+    <div class="cards-preview" id="cardsZone">
+
+    </div>
+
+    <div class="modos">
+
+      <div class="modo-btn", id="btn-memorizar">
+        <div class="modo-icon">
+          <img class="icon-test" src="imagenes/decision.png">
+        </div>
+        Memorizar
+      </div>
+
+      <div class="modo-btn" id="btn-opcion-multiple">
+        <div class="modo-icon">
+          <img class="icon-test" src="imagenes/multiple.png">
+        </div>
+        Opción múltiple
+      </div>
+
+      <div class="modo-btn"
+      id="btn-verdadero-falso">
+        <div class="modo-icon">
+          <img class="icon-test" src="imagenes/ver_falso.png">
+        </div>
+        Verdadero o Falso
+      </div>
+
+      <div class="modo-btn" id="btn-test-abierto">
+        <div class="modo-icon">
+          <img class="icon-test" src="imagenes/abiertas.png">
+        </div>
+        Test abierto
+      </div>
+
+      <div class="modo-btn" id="btn-mixed">
+        <div class="modo-icon">
+          <img class="icon-test" src="imagenes/aleatorio.png">
+        </div>
+        mixed
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+<button id="backBtn" class="back-btn">
+    ← Volver
+</button>
+
+<dialog id="cardsDialog" class="cards-dialog">
+
+  <h3 class="dialog-title">Tarjetas de la categoría</h3>
+
+  <div class="dialog-card-creator">
+    <input id="conceptInput" placeholder="Concepto">
+    <input id="definitionInput" placeholder="Definición">
+    <input id="extraInput" placeholder="Definición extra">
+  </div>
+
+  <div class="dialog-actions">
+    <button id="addCardDialogBtn">+ Añadir</button>
+    <button id="closeDialogBtn">Cerrar</button>
+  </div>
+
+  <div id="dialogCardsPreview" class="dialog-preview"></div>
+
+</dialog>
+
+
+<script src="js/backButton.js"></script>
+<script src="js/desktop.js"></script>
+
+</body>
+</html>

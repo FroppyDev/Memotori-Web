@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Memotori | Dashboard</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="logo">
+        <img src="imagenes/logo2.png" alt="Memotori Logo">
+    </div>
+
+    <div class="user-menu">
+        <span class="user-name" id="welcome">Hola, Froppy</span>
+        <i class="fas fa-user-circle user-icon"></i>
+
+        <div class="dropdown-menu">
+            <a href="#" onclick="logout()">Cerrar sesión</a>
+        </div>
+    </div>
+</header>
+
+
+<main class="dashboard" id="dashboard"></main>
+
+<button class="floating-btn" id="addCategoryBtn">
+    <i class="fas fa-plus"></i>
+</button>
+
+
+<div class="modal-overlay" id="categoryModal">
+    <div class="modal-box">
+        <button class="modal-btn edit" id="editCategoryBtn">Modificar</button>
+        <button class="modal-btn delete" id="deleteCategoryBtn">Eliminar</button>
+        <button class="modal-btn cancel" id="closeModalBtn">Cancelar</button>
+    </div>
+</div>
+
+<dialog id="category-modifier" class="category-dialog">
+  <h3 class="dialog-title">Modificar categoría</h3>
+
+  <div class="field">
+    <label>Título</label>
+    <input id="title-input" type="text">
+  </div>
+
+  <div class="field">
+    <label>Descripción</label>
+    <input id="description-input" type="text">
+  </div>
+
+  <div class="actions">
+    <button id="btn_cancelar" class="btn_cancelar">Cancelar</button>
+    <button id="btn_modificar" class="btn_modificar">Modificar</button>
+  </div>
+</dialog>
+
+
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>

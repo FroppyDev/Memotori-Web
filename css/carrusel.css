@@ -1,0 +1,61 @@
+.informacion {
+    padding: 60px 20px;
+    box-sizing: border-box;
+}
+
+.carrusel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 40px; /* separa del contenido siguiente */
+}
+
+.carrusel-items-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    gap: 20px;
+}
+
+.carrusel-item {
+    flex: 1;
+    height: 350px;
+    position: relative; /* necesario para que el texto absolute funcione */
+    overflow: hidden;
+}
+
+.carrusel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; /* importante para que se vea la imagen */
+}
+
+.carrusel-texto {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 90%;
+}
+
+.carrusel-texto h2 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+}
+
+.carrusel-texto p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.btn-carrusel {
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}

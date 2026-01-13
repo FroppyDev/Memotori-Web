@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/carrusel.css">
+    <link rel="stylesheet" href="css/informacion.css"
+</head>
+<body>
+    <header>
+        <nav class="nav-bar" id="nav-btn">
+            <div class="menubtn"><a href="#inicio">Inicio</a></div>
+            <div class="menubtn"><a href="#informacion">Guia</a></div>
+            <div class="menubtn"><a href="#descargas">Descargas</a></div>
+            <div class="menubtn"><a href="#sobre-nosotros">Sobre nosotros</a></div>
+        </nav>
+        <img class="logo nav" src="imagenes/logo2.png">
+
+        <div class="menu" id="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <section class="inicio">
+        <div class="card-container" id="card">
+            <div class="card-face front">
+                <div class="img"><img class="logo" src="imagenes/logo.png"></div>
+                <form class="form-login" id="login-form">
+
+                    <label class="label-form">Usuario</label>
+                    <input class="input-form" type="email" id="login-email" required placeholder="Ingresa tu email">
+
+                    <label class="label-form">Contraseña</label>
+                    <input class="input-form" type="password" id="login-password" required placeholder="Ingresa tu contraseña">
+
+                    <a href="#" class="forgotten-pass">¿Olvidaste tu contraseña?</a>
+                    <button class="button-form" type="submit" id="btnLogin">Iniciar sesión</button>
+
+                </form>
+
+                <p id="login-msg"></p>
+                
+
+                <label class="new-user-label">¿Nuevo usuario? <a href="#" id="btn-registrar">Crea tu cuenta</a></label><a></a>
+
+                <div class="line-container">
+                    <div class="line"></div>
+                    <label>O</label>
+                    <div class="line"></div>
+                </div>
+
+                <div class="social-login">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+
+            <div class="card-face back">
+                <img class="logo" src="imagenes/logo.png">
+                <form class="form-login" id="register-form">
+
+                    <label class="label-form">Nombre de usuario</label>
+                    <input class="input-form" type="text" id="register-name" required placeholder="Ejem. Froppy Alberto">
+
+                    <label class="label-form">Email</label>
+                    <input class="input-form" type="email" id="register-email" required placeholder="Ejem. ejemplo@gmail.com">
+
+                    <label class="label-form">Contraseña</label>
+                    <input class="input-form" type="password" id="register-password" required placeholder="Juanito_123">
+
+                    <button class="button-form" type="submit">Crear cuenta</button>
+
+                </form>
+
+                <p id="register-msg"></p>
+
+
+                <label class="new-user-label">¿Ya tienes cuenta? <a href="#" id="btn-iniciar">Inicia sesion!</a></label><a></a>
+
+
+            </div>
+        </div>
+    </section>
+
+    <section class="informacion">
+
+            <div class="carrusel">
+    <button class="btn-carrusel" id="prev-btn"><</button>
+
+        <div class="carrusel-items-wrapper">
+            <div class="carrusel-item">
+                <img src="imagenes/carrusel1.jpg" alt="" class="carrusel-img">
+                <div class="carrusel-texto">
+                    <h2>Tu memoria potenciada</h2>
+                    <p>Guarda tus ideas y aprende mejor cada día.</p>
+                </div>
+            </div>
+
+            <div class="carrusel-item">
+                <img src="imagenes/carrusel2.jpg" alt="" class="carrusel-img">
+                <div class="carrusel-texto">
+                    <h2>Organiza tu aprendizaje</h2>
+                    <p>Tus recordatorios y notas, en un solo lugar.</p>
+                </div>
+            </div>
+
+            <div class="carrusel-item">
+                <img src="imagenes/carrusel3.jpg" alt="" class="carrusel-img">
+                <div class="carrusel-texto">
+                    <h2>Comparte tus logros</h2>
+                    <p>Motiva a otros mostrando tu progreso.</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-carrusel" id="next-btn">></button>
+    </div>
+
+
+        <div class="informacion-container">
+
+            <div class="info-parrafo">
+                <h2 class="info-h2">Tu memoria, pero potenciada</h2>
+                <p class="info-p">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatem, deserunt sequi accusantium nulla perferendis nihil, impedit quidem doloribus dicta adipisci quod enim dignissimos! Omnis ipsum amet ad iure beatae quas?</p>
+            </div>
+
+            <div class="info-parrafo">
+                <h2 class="info-h2">¿Como funciona?</h2>
+                <p class="info-p">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Libero assumenda veritatis odit, quos aliquam corrupti! Accusamus dolores cupiditate quibusdam ducimus fugiat ut. Modi, ex quod saepe quasi ab totam aut!</p>
+            </div>
+
+            <img class="mock-up" src="" alt="">
+
+        </div>
+
+    </section>
+
+    <section class="descargas" id="descargas">
+
+        <h2 class="info-h2">Aprende donde quieras y como quieras</h2>
+        <div class="descargas-btn-container">
+            <a href="Memotori.apk" download>
+                <button class="btn-descarga">PlayStore</button>
+
+            </a>
+        </div>
+
+        <h2 class="info-h2">Descarga gratis</h2>
+
+    </section>
+
+    <section class="sobre-nosotros">
+        <footer>
+            <div class="footer-div">
+                <h3 class="footer-h">Equipo de desarrollo</h3>
+                <div class="footer-div-nombres">
+                    <a href="" class="link-footer">Kevin Alberto Medina Cárdenas</a>
+                    <a href="" class="link-footer">Jessica Maria Rojas Ponce</a>
+                    <a href="" class="link-footer">Jose Ramon Ibarra Aragon</a>
+                    <a href="" class="link-footer">Maria Loren Soto Perez</a>
+                    <a href="" class="link-footer">Darwin Aldaba Ramos</a>
+                </div>
+            </div>
+        </footer>
+    </section>
+
+    <script src="js/script.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/carrusel.js"></script>
+    <script src="js/login.js"></script>
+
+</body>
+</html>

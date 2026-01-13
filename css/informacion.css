@@ -1,0 +1,116 @@
+:root {
+  --color-primario: #30B7BE;
+  --color-secundario: #E72D72;
+  --color-auxiliar: #F9EBB9;
+  --color-texto: #ffffff;
+  --radio-borde: 6px;
+  --sombra: 4px 4px 0 #000000;
+  --fuente-principal: 'Poppins', sans-serif;
+  --margin-card: 12px;
+}
+
+.informacion{
+
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--color-auxiliar);
+    padding: 60px;
+    
+
+}
+
+.informacion-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.info-h2{
+
+    color: var(--color-primario);
+    font-size: 45px;
+
+}
+
+.informacion-container p{
+
+    font-size: 25px;
+
+}
+
+.descargas{
+    background-color: white;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    padding-bottom: 50px;
+    border-bottom-left-radius: 50% 250px;
+    border-bottom-right-radius: 50% 250px;
+    position: relative;
+    top: 240px;
+}
+
+.descargas-container{
+
+    display: flex;
+    flex-direction: row;
+
+}
+
+.btn-descarga{
+    width: 200px;
+    height: 70px;
+    color: white;
+    margin-inline: 50px;
+    align-self: center;
+    background-color: var(--color-secundario);
+    border-radius: var(--radio-borde);
+    box-shadow: var(--sombra);
+}
+
+.sobre-nosotros{
+
+    width: 100%;
+    height: auto;
+    padding: 50px;
+    align-items: center;
+    background-color: #30B7BE;
+    box-sizing: border-box;
+}
+
+footer{
+    width: 100%;
+}
+
+.footer-div{
+
+
+    margin-top: 250px;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    gap: 15px;
+
+}
+
+.footer-div-nombres{
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    gap: 25px;
+}
+
+.footer-div-nombres a{
+
+    color: var(--color-texto);
+    text-decoration: none;
+
+}
+
+.footer-h{
+
+    color: var(--color-auxiliar);
+    font-size: 30px;
+
+}
