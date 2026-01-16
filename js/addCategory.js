@@ -8,41 +8,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const user = JSON.parse(localStorage.getItem('user'));
 
-
     const conceptInput = document.getElementById('cardConcept');
     const definitionInput = document.getElementById('cardDefinition');
     const extraInput = document.getElementById('cardExtra');
+    const imageInput = document.getElementById('cardImage'); // 👈 NUEVO
 
-    const categoryFields = document.getElementById('categoryFields');
     const categoryTitle = document.getElementById("categoryName");
     const categoryDescription = document.getElementById("categoryDescription");
     const title = document.getElementById('formTitle');
 
     let cards = [];
-    
+
     title.textContent = 'CREAR CATEGORÍA';
     saveBtn.textContent = '✓ Guardar categoría';
-    
 
+    // ===============================
+    // AGREGAR TARJETA
+    // ===============================
     addCardBtn.addEventListener('click', () => {
 
         const concepto = conceptInput.value.trim();
         const definicion = definitionInput.value.trim();
         const definicionExtra = extraInput.value.trim();
+        const imagen = imageInput.value.trim(); // 👈 NUEVO
 
         if (!concepto || !definicion) {
             alert('Concepto y definición son obligatorios');
             return;
         }
 
-        cards.push({ concepto: concepto, definicion: definicion, definicionExtra: definicionExtra });
+        cards.push({
+            concepto,
+            definicion,
+            definicionExtra,
+            imagen // 👈 SE GUARDA
+        });
+
         renderPreview();
 
         conceptInput.value = '';
         definitionInput.value = '';
         extraInput.value = '';
+        imageInput.value = '';
     });
 
+    // ===============================
+    // PREVIEW TARJETAS
+    // ===============================
     function renderPreview() {
         cardsPreview.innerHTML = '';
 
@@ -56,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="delete-card">✖</button>
 
                     <div class="card-face card-front">
+                        ${card.imagen ? `<img src="${card.imagen}" class="card-img">` : ''}
                         <span>${card.concepto}</span>
                     </div>
 
@@ -80,7 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
+    // ===============================
+    // GUARDAR TODO
+    // ===============================
     saveBtn.addEventListener('click', async () => {
 
         if (cards.length === 0) {
@@ -99,10 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 descripcion: categoryDescription.value.trim()
             });
 
-            const idCategory = categoria.id;
-
-            await saveCards(cards, idCategory);
-
+            await saveCards(cards, categoria.id);
             window.location.href = 'dashboard.html';
 
         } catch (error) {
@@ -111,65 +123,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-
+    // ===============================
+    // GUARDAR TARJETAS
+    // ===============================
     async function saveCards(cards, idCat) {
-
         for (const card of cards) {
             await saveCard({
                 concepto: card.concepto,
                 definicion: card.definicion,
                 definicionExtra: card.definicionExtra,
-                imagen: "miau"
+                imagen: card.imagen || null // 👈 IMPORTANTE
             }, idCat);
         }
     }
 
     async function saveCard(card, idCat) {
-
-        let userId = user.id;
-
-        try{
-            let response = await fetch(`${API}/cards/${idCat}/${userId}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(card)
-                });
-
+        try {
+            const response = await fetch(`${API}/cards/${idCat}/${user.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(card)
+            });
             return await response.json();
-        }catch(error){
-            console.log(error);
+        } catch (error) {
+            console.error(error);
         }
-        
     }
 
+    // ===============================
+    // GUARDAR CATEGORÍA
+    // ===============================
     async function saveCategory(category) {
-
-        let userId = user.id;
-
-
-        try{
-            let response = await fetch(`${API}/decks/${userId}`, {
+        try {
+            const response = await fetch(`${API}/decks/${user.id}`, {
                 method: "POST",
-                headers: {
-                        "Content-Type": "application/json"
-                    },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(category)
             });
 
-
-            if (!response.ok) {
-                throw new Error("Error al guardar categoría");
-            }
-
+            if (!response.ok) throw new Error("Error al guardar categoría");
             return await response.json();
 
-        }catch(error){
-            console.log(error);
+        } catch (error) {
+            console.error(error);
         }
-
     }
 
 });
