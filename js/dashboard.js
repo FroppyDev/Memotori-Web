@@ -2,7 +2,6 @@ const API = "https://memotoriapi.onrender.com";
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 🔐 Usuario logueado
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!user) {
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    document.getElementById('welcome').textContent = `Hola, user`;
+    document.getElementById('welcome').textContent = `Hola, ${user.email}`;
 
     const userMenu = document.querySelector('.user-menu');
     const dropdown = document.querySelector('.dropdown-menu');
@@ -84,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 📦 Obtener categorías desde la API
     async function fetchCategories() {
         try {
             const response = await fetch(`${API}/decks/user/${user.id}`);
@@ -100,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 🎨 Renderizar categorías
     async function renderCategories() {
         const categories = await fetchCategories();
         dashboard.innerHTML = '';
@@ -183,13 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
-        // Abrir / cerrar al hacer click
     userMenu.addEventListener('click', (e) => {
-        e.stopPropagation(); // evita cierre inmediato
+        e.stopPropagation(); 
         dropdown.classList.toggle('active');
     });
 
-    // Cerrar al hacer click fuera
     document.addEventListener('click', () => {
         dropdown.classList.remove('active');
     });
@@ -210,8 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(autoSync, 3000);
 
 });
-
-
 
 // 🚪 Logout
 function logout() {

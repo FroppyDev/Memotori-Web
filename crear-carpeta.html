@@ -67,17 +67,6 @@
             gap: 10px;
         }
 
-        .image-placeholder {
-            flex: 1;
-            border: 2px dashed #fff;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
         .actions {
             display: flex;
             justify-content: center;
@@ -85,6 +74,75 @@
             margin-top: 30px;
         }
 
+        .flip-container {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card {
+            width: 100%;
+            min-height: 300px;
+            height: auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.7s ease;
+        }
+
+        .flip-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            border: 3px solid #000;
+            box-shadow: 10px 10px 0 #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            color: white;
+            font-family: 'Holtwood One SC', serif;
+            text-align: center;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+
+        .card-front {
+            background: #30B7BE;
+            font-size: clamp(14px, 2vw, 20px); 
+        }
+
+
+        .card-back {
+            background: #E72D72;
+            transform: rotateY(180deg);
+            flex-direction: column;
+            font-size: clamp(14px, 2vw, 20px); 
+        }
+
+        .card-back .card-small {
+            margin-top: 10px;
+            font-size: clamp(12px, 1.8vw, 18px);
+            line-height: 1.3em;
+        }
+
+
+        .divider {
+            width: 2px;
+            height: 20px; 
+            background: rgba(255, 255, 255, 0.5);
+            margin: 10px auto; 
+        }
+
+        .card-face span {
+            display: block;
+            word-break: break-word;
+            line-height: 1.2em;
+        }
         .btn-add,
         .btn-check {
             background-color: var(--accent);
@@ -118,7 +176,6 @@
 
     <h2 class="titulo" id="formTitle" style="text-align:center;"></h2>
 
-    <!-- CAMPOS DE CATEGORÍA -->
     <div id="categoryFields">
         <div class="input-group">
             <label class="titulo">Nombre de Categoría</label>
@@ -138,10 +195,6 @@
             <input id="cardConcept" class="input-custom" placeholder="Concepto">
             <input id="cardDefinition" class="input-custom" placeholder="Definición">
             <input id="cardExtra" class="input-custom" placeholder="Definición extra">
-        </div>
-
-        <div class="image-placeholder">
-            <span>Imagen</span>
         </div>
     </div>
 

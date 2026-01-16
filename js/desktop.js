@@ -1,11 +1,10 @@
 const API = "https://memotoriapi.onrender.com";
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    const selectedIndex = JSON.parse(localStorage.getItem('selectedCategory'));
+    const selectedCategory = JSON.parse(localStorage.getItem('selectedCategory'));
     const user = JSON.parse(localStorage.getItem('user'));
 
-    if (!selectedIndex || !user) {
+    if (!selectedCategory || !user) {
         window.location.href = 'dashboard.html';
         return;
     }
@@ -13,11 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const dialog = document.getElementById("cardsDialog");
     const closeDialogBtn = document.getElementById("closeDialogBtn");
     const addCardBtn = document.getElementById("addCardDialogBtn");
-
     const conceptInput = document.getElementById("conceptInput");
     const definitionInput = document.getElementById("definitionInput");
     const extraInput = document.getElementById("extraInput");
-    const preview = document.getElementById("dialogCardsPreview");
+    const zone = document.getElementById('cardsZone');
 
     const btnMemorizar = document.getElementById("btn-memorizar");
     const btnOpcionMultiple = document.getElementById("btn-opcion-multiple");
@@ -27,17 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const title = document.getElementById('categoryTitle');
     const description = document.getElementById('categoryDescription');
-    const zone = document.getElementById('cardsZone');
 
-    title.textContent = selectedIndex.nombre;
-    description.textContent = selectedIndex.descripcion;
+    title.textContent = selectedCategory.nombre;
+    description.textContent = selectedCategory.descripcion;
 
     let tempCards = [];
-
+    let savedCards = [];
 
     async function getCards() {
         try {
-            const res = await fetch(`${API}/cards/deck/${selectedIndex.id}/${user.id}`);
+            const res = await fetch(`${API}/cards/deck/${selectedCategory.id}/${user.id}`);
             if (!res.ok) throw new Error("HTTP " + res.status);
             return await res.json();
         } catch (err) {
@@ -48,71 +45,114 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function saveCard(card) {
         try {
-            await fetch(`${API}/cards/${selectedIndex.id}/${user.id}`, {
+            const res = await fetch(`${API}/cards/${selectedCategory.id}/${user.id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(card)
             });
+            if (!res.ok) throw new Error("Error al guardar");
+            return await res.json();
         } catch (err) {
             console.error("Error al guardar tarjeta", err);
+            return null;
+        }
+    }
+
+    async function deleteCardFromDB(cardId) {
+        try {
+            const res = await fetch(`${API}/cards/deck/${selectedCategory.id}/${cardId}`, {
+                method: "DELETE"
+            });
+
+            if (!res.ok) {
+                let errorText = "Error al eliminar la tarjeta";
+                try {
+                    const errJson = await res.json();
+                    if (errJson.detail) errorText = errJson.detail;
+                    else if (errJson.message) errorText = errJson.message;
+                    else errorText = JSON.stringify(errJson);
+                } catch {
+                    errorText = await res.text();
+                }
+                alert(errorText);
+                return false;
+            }
+
+            return true;
+        } catch (err) {
+            console.error(err);
+            alert("Error al eliminar la tarjeta");
+            return false;
         }
     }
 
     async function renderCards() {
-        const cards = await getCards();
-        const newHash = hashCards(cards);
-
-        if (newHash === lastCardsHash) return; 
-        lastCardsHash = newHash;
-
+        savedCards = await getCards();
         zone.innerHTML = '';
 
-        cards.forEach(card => {
-            const container = document.createElement('div');
-            container.className = 'flip-container';
+        savedCards.forEach(card => {
+            zone.appendChild(createCardElement(card, true));
+        });
 
-            container.innerHTML = `
-                <div class="flip-card">
-                    <div class="card-face card-front">
-                        <span>${card.concepto}</span>
-                        <div class="divider"></div>
-                    </div>
-
-                    <div class="card-face card-back">
-                        <span>${card.definicion}</span>
-                        <div class="divider"></div>
-                        <div class="img-container back-info">
-                            <span class="card-small">${card.definicionExtra || ''}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            container.addEventListener('click', () => {
-                container.querySelector('.flip-card').classList.toggle('flipped');
-            });
-
-            zone.appendChild(container);
+        tempCards.forEach((card, index) => {
+            zone.appendChild(createCardElement(card, false, index));
         });
 
         const addBtn = document.createElement('button');
         addBtn.className = 'add-card-btn';
         addBtn.textContent = '+ Añadir tarjeta';
-        addBtn.onclick = () => {
-            tempCards = [];
-            dialog.showModal();
-        };
-
+        addBtn.onclick = () => dialog.showModal();
         zone.appendChild(addBtn);
     }
 
+    function createCardElement(card, isSaved, tempIndex) {
+        const container = document.createElement('div');
+        container.className = 'flip-container';
+        container.innerHTML = `
+            <div class="flip-card">
+                <button class="delete-card">✖</button>
+                <div class="card-face card-front">
+                    <span>${card.concepto}</span>
+                </div>
+                <div class="card-face card-back">
+                    <span>${card.definicion}</span>
+                    <span class="card-small">${card.definicionExtra || ''}</span>
+                </div>
+            </div>
+        `;
+
+        container.addEventListener('click', () => {
+            container.querySelector('.flip-card').classList.toggle('flipped');
+        });
+
+        container.querySelector('.delete-card').addEventListener('click', async e => {
+            e.stopPropagation();
+            if (!confirm("¿Seguro que quieres eliminar esta tarjeta?")) return;
+
+            if (isSaved) {
+                if (!card.id) {
+                    alert("No se puede eliminar esta tarjeta, no tiene ID válido");
+                    return;
+                }
+                const ok = await deleteCardFromDB(card.id);
+                if (!ok) return;
+                savedCards = savedCards.filter(c => c.id !== card.id);
+            } else {
+                tempCards.splice(tempIndex, 1);
+            }
+
+            renderCards();
+        });
+
+        return container;
+    }
 
     closeDialogBtn.addEventListener("click", () => {
         tempCards = [];
         dialog.close();
     });
 
-    addCardBtn.addEventListener("click", () => {
+    addCardBtn.addEventListener("click", async () => {
         if (!conceptInput.value || !definitionInput.value) return;
 
         const card = {
@@ -123,40 +163,21 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         tempCards.push(card);
-        saveCard(card);
+        const saved = await saveCard(card);
+        if (saved && saved.id) {
+            savedCards.push(saved);
+            tempCards = tempCards.filter(c => c !== card);
+        }
 
         conceptInput.value = "";
         definitionInput.value = "";
         extraInput.value = "";
 
-        renderDialogCards();
+        renderCards();
     });
 
-    function renderDialogCards() {
-        preview.innerHTML = "";
-
-        tempCards.forEach((card, index) => {
-            const div = document.createElement("div");
-            div.className = "dialog-card";
-
-            div.innerHTML = `
-                <button>×</button>
-                <strong>${card.concepto}</strong>
-                <p>${card.definicion}</p>
-                <small>${card.definicionExtra || ""}</small>
-            `;
-
-            div.querySelector("button").onclick = () => {
-                tempCards.splice(index, 1);
-                renderDialogCards();
-            };
-
-            preview.appendChild(div);
-        });
-    }
-
     function goToGame(mode) {
-        localStorage.setItem('selectedCategory', JSON.stringify(selectedIndex));
+        localStorage.setItem('selectedCategory', JSON.stringify(selectedCategory));
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("mode", mode);
         window.location.href = 'juegos.html';
@@ -168,21 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnVerdaderoFalso.onclick = () => goToGame("TRUE_OR_FALSE");
     btnMixed.onclick = () => goToGame("MIXED");
 
-    let lastCardsHash = '';
-
-
-    function hashCards(cards) {
-        return JSON.stringify(cards.map(c => ({
-            id: c.id,
-            concepto: c.concepto,
-            definicion: c.definicion,
-            definicionExtra: c.definicionExtra,
-            imagen: c.imagen
-        })));
-    }
-
-
     renderCards();
     setInterval(renderCards, 3000);
-    
 });

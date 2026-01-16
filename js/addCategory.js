@@ -57,12 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <div class="card-face card-front">
                         <span>${card.concepto}</span>
-                        <div class="divider"></div>
                     </div>
 
                     <div class="card-face card-back">
                         <span>${card.definicion}</span>
-                        <div class="divider"></div>
                         <span class="card-small">${card.definicionExtra || ''}</span>
                     </div>
                 </div>
@@ -81,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cardsPreview.appendChild(wrapper);
         });
     }
+
 
     saveBtn.addEventListener('click', async () => {
 
