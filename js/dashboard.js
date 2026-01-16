@@ -28,6 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const editBtn = document.getElementById('editCategoryBtn');
     const deleteBtn = document.getElementById('deleteCategoryBtn');
 
+
+    const imageInput = document.getElementById("image-input");
+    const preview = document.getElementById("image-preview");
+    const previewImg = document.getElementById("preview-img");
+    const btnRemoveImage = document.getElementById("btn-remove-image");
+
+    let imageDeleted = false;
+
     let selectedCategory = null;
 
     async function deleteCategory(categoria) {
@@ -54,6 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function modificarCategoria(categoria) {
+
+        let imageUrl = categoria.imagen;
+
+        if (imageInput.files && imageInput.files[0]) {
+            imageUrl = await subirImagen(imageInput.files[0]);
+        }
+
+        if (imageDeleted) {
+            imageUrl = null;
+        }
+
         try{
             const response = await fetch(`${API}/decks/${categoria.id}`, {
                 method: "PUT",
@@ -63,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     nombre: categoria.nombre,
                     descripcion: categoria.descripcion,
-                    imagen: categoria.imagen,
+                    imagen: imageUrl,
                     color: categoria.color,
                     smart: categoria.smart,
                     latitud: categoria.latitud,
@@ -119,6 +138,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2>${cat.nombre}</h2>
             `;
 
+            const img = document.createElement('div');
+            img.className = 'folder-image';
+
+            if (cat.imagen) {
+                img.style.backgroundImage = `url(${cat.imagen})`;
+                img.style.backgroundSize = 'cover';
+                img.style.backgroundPosition = 'center';
+            } else {
+                img.style.backgroundColor = "#E72D72";
+            }
+
+            card.insertBefore(img, card.querySelector('h2'));
+
             card.addEventListener('click', () => {
                 localStorage.setItem('selectedCategory', JSON.stringify(cat));
                 localStorage.setItem("user", JSON.stringify(user));
@@ -141,6 +173,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         inputTitulo.value = selectedCategory.nombre || "";
         inputDescripcion.value = selectedCategory.descripcion || "";
+        if (selectedCategory.imagen) {
+            previewImg.src = selectedCategory.imagen;   // 👈 DIRECTO
+            preview.style.display = "flex";
+            imageDeleted = false;
+        } else {
+            previewImg.src = "";
+            preview.style.display = "none";
+            imageDeleted = false;
+        }
+
 
         modifierModal.showModal();
     });
@@ -189,7 +231,45 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdown.classList.remove('active');
     });
 
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            previewImg.src = reader.result;
+            preview.style.display = "flex";
+            imageDeleted = false;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    btnRemoveImage.addEventListener("click", () => {
+        imageInput.value = "";
+        previewImg.src = "";
+        preview.style.display = "none";
+        imageDeleted = true;
+    });
+
+
     let lastSnapshot = "";
+
+    async function subirImagen(file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(`${API}/upload-image/`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) {
+            throw new Error("Error al subir imagen");
+        }
+
+        const data = await res.json();
+        return data.url; // 👈 URL FINAL
+    }
 
     async function autoSync() {
         const categories = await fetchCategories();

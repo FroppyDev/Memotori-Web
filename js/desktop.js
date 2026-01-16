@@ -17,6 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const extraInput = document.getElementById("extraInput");
     const zone = document.getElementById('cardsZone');
 
+    const conceptoInput = document.getElementById("concepto-input");
+    const definitionCardInput = document.getElementById("definitionCard-input");
+    const definitionExtraInput = document.getElementById("definitionExtra-input");
+    const btnCancelar = document.getElementById("btnCard_cancelar");
+    const btnModificar = document.getElementById("btnCard_modificar");
+    const dialogCard = document.getElementById("card-modifier");
+    const btnDelete = document.getElementById("btnCard_delete");
+
+
+    const imageInput = document.getElementById("image-input");
+    const preview = document.getElementById("image-preview");
+    const previewImg = document.getElementById("preview-img");
+    const btnRemoveImage = document.getElementById("btn-remove-image");
+
+    let imageDeleted = false;
+
     const btnMemorizar = document.getElementById("btn-memorizar");
     const btnOpcionMultiple = document.getElementById("btn-opcion-multiple");
     const btnVerdaderoFalso = document.getElementById("btn-verdadero-falso");
@@ -25,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const title = document.getElementById('categoryTitle');
     const description = document.getElementById('categoryDescription');
+    let currentCard;
 
     title.textContent = selectedCategory.nombre;
     description.textContent = selectedCategory.descripcion;
@@ -34,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function getCards() {
         try {
-            const res = await fetch(`${API}/cards/deck/${selectedCategory.id}/${user.id}`);
+            const res = await fetch(`${API}/cards/deck/test/${selectedCategory.id}/${user.id}`);
             if (!res.ok) throw new Error("HTTP " + res.status);
             return await res.json();
         } catch (err) {
@@ -55,34 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error("Error al guardar tarjeta", err);
             return null;
-        }
-    }
-
-    async function deleteCardFromDB(cardId) {
-        try {
-            const res = await fetch(`${API}/cards/deck/${selectedCategory.id}/${cardId}`, {
-                method: "DELETE"
-            });
-
-            if (!res.ok) {
-                let errorText = "Error al eliminar la tarjeta";
-                try {
-                    const errJson = await res.json();
-                    if (errJson.detail) errorText = errJson.detail;
-                    else if (errJson.message) errorText = errJson.message;
-                    else errorText = JSON.stringify(errJson);
-                } catch {
-                    errorText = await res.text();
-                }
-                alert(errorText);
-                return false;
-            }
-
-            return true;
-        } catch (err) {
-            console.error(err);
-            alert("Error al eliminar la tarjeta");
-            return false;
         }
     }
 
@@ -114,12 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
                <img src="${card.imagen}" class="real-img" />
            </div>`
         : `<div class="img-container">
-               <img src="assets/img/default-card.svg" class="default-img" />
+               <img src="/Memotori-web/imagenes/photo.png" class="default-img" />
            </div>`;
 
     container.innerHTML = `
             <div class="flip-card">
-                <button class="delete-card">✖</button>
+                <button class="delete-card">+</button>
 
                 <div class="card-face card-front">
                     ${imageHTML}
@@ -138,23 +127,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         container.querySelector('.delete-card').addEventListener('click', async e => {
-            e.stopPropagation();
-            if (!confirm("¿Seguro que quieres eliminar esta tarjeta?")) return;
+            e.stopPropagation(); 
 
-            if (isSaved) {
-                if (!card.id) {
-                    alert("No se puede eliminar esta tarjeta, no tiene ID válido");
-                    return;
-                }
-                const ok = await deleteCardFromDB(card.id);
-                if (!ok) return;
-                savedCards = savedCards.filter(c => c.id !== card.id);
+            conceptoInput.value = card.concepto || "";
+            definitionCardInput.value = card.definicion || "";
+            definitionExtraInput.value = card.definicionExtra || "";
+            if (card.imagen) {
+                previewImg.src = card.imagen;   
+                preview.style.display = "flex";
+                imageDeleted = false;
             } else {
-                tempCards.splice(tempIndex, 1);
+                previewImg.src = "";
+                preview.style.display = "none";
+                imageDeleted = false;
             }
 
-            renderCards();
+            currentCard = card;
+            dialogCard.showModal();
         });
+
 
         return container;
     }
@@ -162,6 +153,21 @@ document.addEventListener('DOMContentLoaded', () => {
     closeDialogBtn.addEventListener("click", () => {
         tempCards = [];
         dialog.close();
+    });
+
+    btnDelete.addEventListener("click", async () => {
+        if (!currentCard) return;
+
+        const confirmDelete = confirm("¿Eliminar esta tarjeta? Esta acción no se puede deshacer.");
+        if (!confirmDelete) return;
+
+        const ok = await deleteCard(currentCard);
+
+        if (ok) {
+            dialogCard.close();
+            currentCard = null;
+            renderCards();
+        }
     });
 
     addCardBtn.addEventListener("click", async () => {
@@ -188,12 +194,125 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCards();
     });
 
+    btnCancelar.addEventListener("click", () => {
+        dialogCard.close();
+    });
+
+    btnModificar.addEventListener("click", async () => {
+        if (!currentCard) return;
+
+        await modificarTarjeta(currentCard);
+        dialogCard.close();
+        renderCards();
+
+    });
+
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            previewImg.src = reader.result;
+            preview.style.display = "flex";
+            imageDeleted = false;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    btnRemoveImage.addEventListener("click", () => {
+        imageInput.value = "";
+        previewImg.src = "";
+        preview.style.display = "none";
+        imageDeleted = true;
+    });
+
+    async function deleteCard(card) {
+        try {
+            console.log("Deleting card:", card);
+            const res = await fetch(
+                `${API}/cards/deck/${selectedCategory.id}/${card.id}`,
+                {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" }
+                }
+            );
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text);
+            }
+
+            return await res.json();
+        } catch (error) {
+            console.error("Error al modificar la tarjeta:", error);
+        }
+    }
+
+    async function modificarTarjeta(card) {
+
+        let imageUrl = card.imagen;
+
+
+        if (imageInput.files && imageInput.files[0]) {
+            imageUrl = await subirImagen(imageInput.files[0]);
+        }
+
+        if (imageDeleted) {
+            imageUrl = null;
+        }
+
+        try {
+            const res = await fetch(
+                `${API}/cards/${card.id}`,
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        concepto: conceptoInput.value,
+                        definicion: definitionCardInput.value,
+                        definicionExtra: definitionExtraInput.value,
+                        imagen: imageUrl
+                    })
+                }
+            );
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text);
+            }
+
+            return await res.json();
+        } catch (error) {
+            console.error("Error al modificar la tarjeta:", error);
+        }
+    }
+
+
     function goToGame(mode) {
         localStorage.setItem('selectedCategory', JSON.stringify(selectedCategory));
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("mode", mode);
         window.location.href = 'juegos.html';
     }
+
+    async function subirImagen(file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(`${API}/upload-image/`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) {
+            throw new Error("Error al subir imagen");
+        }
+
+        const data = await res.json();
+        return data.url; // 👈 URL FINAL
+    }
+
 
     btnMemorizar.onclick = () => goToGame("MEMORIZAR");
     btnOpcionMultiple.onclick = () => goToGame("MULTIPLE_CHOICE");
@@ -202,5 +321,4 @@ document.addEventListener('DOMContentLoaded', () => {
     btnMixed.onclick = () => goToGame("MIXED");
 
     renderCards();
-    setInterval(renderCards, 3000);
 });

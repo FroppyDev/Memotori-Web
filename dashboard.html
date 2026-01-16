@@ -54,10 +54,28 @@
     <input id="description-input" type="text">
   </div>
 
+  <div class="field">
+  <label>Imagen</label>
+
+  <input 
+    id="image-input" 
+    type="file" 
+    accept="image/*"
+  />
+
+  <!-- Preview -->
+  <div class="image-preview" id="image-preview">
+    <img id="preview-img" />
+    <button id="btn-remove-image" type="button">Quitar imagen</button>
+  </div>
+</div>
+
+
   <div class="actions">
     <button id="btn_cancelar" class="btn_cancelar">Cancelar</button>
     <button id="btn_modificar" class="btn_modificar">Modificar</button>
   </div>
+  
 </dialog>
 
 
